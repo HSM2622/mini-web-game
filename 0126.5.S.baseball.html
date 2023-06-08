@@ -4,20 +4,20 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>숫자야구 커스텀</title>
+    <title>Number Baseball Game</title>
     <style>
 
     </style>
 </head>
 <body>
-    <form action="" id="form" style="float:left">   <!-- float:left 다른 영역의 태그를 나란히 붙이는 명령어 -->
+    <form action="" id="form" style="float:left">   <!-- float:left他の領域のタグを並べるコマンド -->
         <input type="text" id = "input">
-        <button type="submit">입력</button>
+        <button type="submit">入力</button>
     </form>
-        <button id = "initial" style="float:left">초기화</button>
-        <button id = "clear">기록 지우기</button>
+        <button id = "initial" style="float:left">初期化</button>
+        <button id = "clear">記録消去</button>
     <p><div id="logs"></div></p>
-    <p><div id="logs2">기록: <br></div></p>
+    <p><div id="logs2">記録: <br></div></p>
 </body>
 <script>
     const $form = document.querySelector("form");
@@ -44,48 +44,48 @@
             out = 0;
             tries = 0;
             console.log(cpuNumber);
-            $logs2.innerHTML += "제시값이 새로 정해짐 <br>";
-            return $logs.textContent = "결과: 네 자릿수의 값이 새로 정해졌습니다. 맞춰보세요!";
+            $logs2.innerHTML += "提示値が新しく決まりました。 <br>";
+            return $logs.textContent = "結果: 4 桁の値が新たに決まりました。 当ててみてください！";
         };
 
         $initial.addEventListener('click', onInitial);
         onInitial();
         $clear.addEventListener('click', () => {
-            return $logs2.innerHTML = "기록: <br>";
+            return $logs2.innerHTML = "記録: <br>";
         });
 
         $form.addEventListener('submit', ()=> {
             event.preventDefault();
-            //input값 유효상태 확인
+            //input値の有効状態の確認
             if (new Set($input.value).size != 4)
-                return $logs.textContent = "결과: 유효한 값이 아닙니다. 중복되는 숫자가 없는 네 자릿수를 입력하세요.";
-            //유효한 값이라면 넘어감
-            $logs.textContent = "결과: " + $input.value;
+                return $logs.textContent = "結果: 有効な値ではありません。 重複する数字のない4桁を入力してください。";
+            //有効な値なら越え
+            $logs.textContent = "結果: " + $input.value;
             let ball = 0;
             let strike = 0;
             let input = $input.value;
-            const checkArray = input.split("");                 //변수명.split(구분점,배열길이); => 문자열을 배열에 세팅하는 함수로, 
-                                                                //구분점은 문자열을 읽는 과정에서 구분점에 입력한 문자열을 만날 경우 다음 인덱스로 넘어가서 입력한다.
-                                                                //만난 문자열은 다음 인덱스에 입력된다. 
-                                                                //즉, " "를 입력할 경우 문자열에서 띄어쓰기를 할 때마다 인덱스가 잘리며, 다음 인덱스에 띄우고(" "이 입력되고) 입력된다. 
+            const checkArray = input.split("");                 //変数名.split(区分点、配列長); => 文字列を配列にセットする関数で、
+                                                                //区分点は文字列を読む過程で区分点に入力した文字列に出会った場合、次のインデックスに移って入力する。
+                                                                //会った文字列は次のインデックスに入力される。
+                                                                //つまり、" "を入力する場合、文字列から分かち書きをするたびにインデックスが切り取られ、次のインデックスに浮かべて(" "が入力され)入力される。
 
-            //checkArray 작성. 다음과 같이 할 경우 split과 유사하나 중간에 0이 있으면 숫자로 변하는 과정에서 0이 있던 자릿수자체가 사라지는 문제점이 있었음.
+            //checkArray作成。次のようにする場合、splitと類似しているが、途中に0があると数字に変わる過程で0のあった桁自体が消える問題点があった。
             /*for(let a = 0; Number(input) != 0; ){
                 a = Math.floor(Number(input)/(10**(input.length-1)));
                 checkArray.push(a);
                 if (a == 0)
-                return $logs.textContent = "결과: " + "유효한 값이 아닙니다. 0은 포함될 수 없습니다.";
+                return $logs.textContent = "結果: " + "有効な値ではありません。 0は含まれません。";
                 input = String(Number(input) - (a * (10**(input.length-1))));
             };*/
             
-            //0가 포함되어 있는지 확인하는 동시에 배열의 문자열을 모두 숫자로 바꾸는 과정
+            //0が含まれていることを確認すると同時に、配列の文字列をすべて数字に変える過程
             for(let a = 0; a < checkArray.length; a++){
                 if (checkArray[a] == '0')
-                return $logs.textContent = "결과: " + "유효한 값이 아닙니다. 0은 포함될 수 없습니다.";
+                return $logs.textContent = "結果: " + "有効な値ではありません。 0は含まれません。";
                 checkArray[a] = Number(checkArray[a]);
             }
             console.log(checkArray);
-            //볼, 스트라이크 확인
+            //ボール、ストライク確認
             for (let a = 0; a < cpuNumber.length; a++){
                 if (checkArray[a] == cpuNumber[a]){
                     strike++;
@@ -104,18 +104,18 @@
             if (ball == 0 && strike == 0){
                 out ++;
                 tries ++;
-                $logs2.innerHTML += $input.value + ", " + out + " 아웃, " + tries + " 번째 시도<br> ";
-                return $logs.textContent = "결과: " + out + " 아웃입니다. " + tries + " 회 시도하셨습니다.";
+                $logs2.innerHTML += $input.value + ", " + out + " アウト, " + tries + " トライ<br> ";
+                return $logs.textContent = "結果: " + out + " アウトです。 " + tries + " 回しました。";
             };
             if (strike == 4){
                 tries++;
-                $logs2.innerHTML += $input.value + ", 홈런, " + tries + " 번째 시도<br> ";
-                return $logs.textContent = "결과: 축하합니다. 홈런입니다!";
+                $logs2.innerHTML += $input.value + ", ホームラン、 " + tries + " トライ<br> ";
+                return $logs.textContent = "結果: おめでとうございます。 ホームランです！";
             }
             
             tries++;
-            $logs2.innerHTML += $input.value + ", " + strike + " 스트라이크, " + ball + " 볼, " + tries + " 번째 시도<br> ";
-            return $logs.textContent = "결과: " + strike + " 스트라이크, " + ball + " 볼입니다. " + tries + " 회 시도하셨습니다.";
+            $logs2.innerHTML += $input.value + ", " + strike + " ストライク、 " + ball + " ボール、 " + tries + " トライ<br> ";
+            return $logs.textContent = "結果: " + strike + " ストライク、 " + ball + " ボールです。" + tries + "回しました。";
         });
     
 </script>

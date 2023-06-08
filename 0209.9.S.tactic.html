@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>틱택토 커스텀</title>
+    <title>TIC-TAC-TOE</title>
     <style>
         
         #ruleTable {
@@ -46,8 +46,8 @@
 
         td {
           border: 1px solid black;
-          width: 40px;
-          height: 40px;
+          width: 25px;
+          height: 25px;
           text-align: center;
           /* background-color:darkgray; O*/
           /* background-color:teal; X*/
@@ -61,55 +61,55 @@
 <body>
     <table id = 'ruleTable' border="1" bordercolor="blue" align = "center" >
         <tr bgcolor="green" align ="center"> 
-            <p><th colspan = "3" span style="color:white">게임 룰을 선택해주세요.</th></p>
+            <p><th colspan = "3" span style="color:white">ゲームのルールを選んでください</th></p>
         </tr>
         <tr>
-            <td colspan = "2">O에게 삼삼 금지 룰 적용[미완]</td>
+            <td colspan="2">Oに33禁止ルール適用[未完]</td>
             <td><input id = "rule33" type= "checkbox"></td>
-        </tr>
-        <tr>
-            <td colspan = "2">O에게 사사 금지 룰 적용[미완]</td>
+            </tr>
+            <tr>
+            <td colspan="2">Oに44禁止ルール適用[未完]</td>
             <td><input id = "rule44" type= "checkbox"></td>
-        </tr>
-        <tr>
-            <td colspan = "2">O에게 장목 금지 룰 적용[미완]</td>
+            </tr>
+            <tr>
+            <td colspan="2">Oに長目禁止ルール適用[未完]</td>
             <td><input id = "jangmok" type= "checkbox"></td>
-        </tr>
-        <tr>
-            <td colspan = "2">O의 대국시간 (기본: 무제한, 최소 1초)</td>
+            </tr>
+            <tr>
+            <td colspan= "2"> Oの対局時間(基本:無制限、最小1秒)</td>
             <td><input id = "oTotalTime" type= "number"></td>
-        </tr>
-        <tr>
-            <td colspan = "2">O의 초읽기 (기본: 40초, 최소 5초)</td>
+            </tr>
+            <tr>
+            <td colspan="2">Oの秒読み(基本:40秒、最低5秒)</td>
             <td><input id = "oCountdown" type= "number"></td>
-        </tr>
-        <tr>
-            <td colspan = "2">O의 초읽기 횟수 (기본: 3회, 최소 1회)</td>
+            </tr>
+            <tr>
+            <td colspan="2">Oの秒読み回数(基本:3回、最低1回)</td>
             <td><input id = "oCountdownChance" type= "number"></td>
-        </tr>
-        <tr>
-            <td colspan = "2">X의 대국시간          (기본: 무제한, 최소 1초)</td>
+            </tr>
+            <tr>
+            <td colspan= "2"> Xの対局時間(基本:無制限、最小1秒)</td>
             <td><input id = "xTotalTime" type= "number"></td>
-        </tr>
-        <tr>
-            <td colspan = "2">X의 초읽기            (기본: 40초, 최소 5초)</td>
+            </tr>
+            <tr>
+            <td colspan= "2"> Xの秒読み(基本:40秒、最低5秒)</td>
             <td><input id = "xCountdown" type= "number"></td>
-        </tr>
-        <tr>
-            <td colspan = "2">X의 초읽기 횟수       (기본: 3회, 최소 1회)</td>
+            </tr>
+            <tr>
+            <td colspan="2"> Xの秒読み回数(基本:3回、最低1回)</td>
             <td><input id = "xCountdownChance" type= "number"></td>
-        </tr>
-        <tr>
-            <td colspan = "2">오목판 가로 길이 (기본: 19칸, 최소 5칸 최대 25칸)</td>
+            </tr>
+            <tr>
+            <td colspan="2"> 横長 (基本:19マス、最小5マス、最大25マス)</td>
             <td><input id = "cell" type= "number"></td>
-        </tr>
-        <tr>
-            <td colspan = "2">오목판 세로 길이 (기본: 19칸, 최소 5칸 최대 25칸)</td>
+            </tr>
+            <tr>
+            <td colspan="2"> 縦長 (基本:19マス、最小5マス、最大25マス)</td>
             <td><input id = "row" type= "number"></td>
-        </tr>
-        <tr>
+            </tr>
+            <tr>
             <td colspan="3">
-            <button>시작</button>
+            <button>始め</button>
             </td>
         </tr>
         </table>
@@ -134,45 +134,45 @@
         const $row = document.querySelector('#row');
         const $cell = document.querySelector('#cell');
         let oTotalTime, oCountdown, oCountdownChance, xTotalTime, xCountdown, xCountdownChance, row, cell, rule33, rule44, jangmok;
-        let result = false;             // result가 false면 승부가 안난 상태, true면 승부가 난 상태.
+        let result = false;             // resultがfalseなら勝負がつかない状態、trueなら勝負がついた状態。
         let correctArr = [];
         let turn = 'O';
         let oTimerFuc = '';
         let xTimerFuc = '';
 
-        //게임 시작 설정
+        //ゲーム開始設定
         const onClickStart = (event) => {
-            //이상한 값 솎아내기
+            //変な値段の間引き
             if ($oTotalTime.value < 1 && $oTotalTime.value != ''){
-                alert("양식에 맞춰주세요.")
+                alert("様式に合わせてください。")
                 return;
             };
             if ($oCountdown.value < 5 && $oCountdown.value != ''){
-                alert("양식에 맞춰주세요.")
+                alert("様式に合わせてください。")
                 return;
             };
             if ($oCountdownChance.value < 1 && $oCountdownChance.value != ''){
-                alert("양식에 맞춰주세요.")
+                alert("様式に合わせてください。")
                 return;
             };
             if ($xTotalTime.value < 1 && $xTotalTime.value != ''){
-                alert("양식에 맞춰주세요.")
+                alert("様式に合わせてください。")
                 return;
             };
             if ($xCountdown.value < 5 && $xCountdown.value != ''){
-                alert("양식에 맞춰주세요.")
+                alert("様式に合わせてください。")
                 return;
             };
             if ($xCountdownChance.value < 1 && $xCountdownChance.value != ''){
-                alert("양식에 맞춰주세요.")
+                alert("様式に合わせてください。")
                 return;
             };
             if (($cell.value < 5 || $cell.value > 25) && $cell.value != ''){
-                alert("양식에 맞춰주세요.")
+                alert("様式に合わせてください。")
                 return;
             };
             if (($row.value < 5 || $row.value > 25) && $row.value != ''){
-                alert("양식에 맞춰주세요.")
+                alert("様式に合わせてください。")
                 return;
             };
             $row.value = $row.value === '' ? 19 : $row.value;
@@ -198,7 +198,7 @@
             $ruleTable.remove();
             $button.remove();
 
-            //오목판 생성
+            //碁盤つくり
             for (let i = 0; i < row+1; i++){ 
                 const $tr = document.createElement('tr');
                 $table.appendChild($tr);
@@ -223,28 +223,28 @@
 
         
         
-        $result.textContent = `현재 ${turn}의 턴입니다.`;
+        $result.textContent = `現在 ${turn}の番です`;
 
 
-        const designate = (preventBug1, preventBug2, correct, correctArr) => {
+        const designate = (event, preventBug1, preventBug2, correct, correctArr) => {
             const designate = document.querySelector(`#r${preventBug1}c${preventBug2}`);
                 if (designate.textContent == event.textContent && correct != 5){
                     correct++;
                     correctArr.push([preventBug1, preventBug2]);
                 }
                 if (correct == 5){
-                    return {correct, correctArr, continue: true}
+                    return {correct, correctArr, break: true}
                 }
                 if (designate.textContent != event.textContent){
                     correct = 0;
                     correctArr = [];
                 }
-                return {correct, correctArr, continue: false}
+                return {correct, correctArr, break: false}
         }
 
-        //오목판 승패계산함수
+        //勝敗計算関数
         const resultCalculator = (event) => {
-            //event.cellIndex-4 ~~ event.cellIndex+4까지 조사 (가로)
+            //event.cellIndex-4 ~~ event.cellIndex+4まで 調査 (横に)
             let correct = 0;
             let preventBug1 = 0;
             let preventBug2 = 0;
@@ -255,82 +255,58 @@
             };
             };
 
-            //가로
+            //横に
             for (let i = -4; i < 5; i++){
                 preventBug1 = event.parentNode.rowIndex
                 preventBug2 = event.cellIndex+i;
                 preventBugF();
                 console.log(`${preventBug1}, ${preventBug2}`)
-                const result = designate(preventBug1, preventBug2, correct, correctArr)
+                const result = designate(event, preventBug1, preventBug2, correct, correctArr)
                 correct = result.correct
                 correctArr = result.correctArr
-                if (result.continue)
-                    continue;
+                if (result.break)
+                    break;
             };
-                console.log(correct + " 가로 계산");
-            //세로
+                console.log(correct + " 横の計算");
+            //縦
             for (let i = -4; i < 5; i++){
                 preventBug1 = event.parentNode.rowIndex+i
                 preventBug2 = event.cellIndex
                 preventBugF();
                 console.log(`${preventBug1}, ${preventBug2}`)
-                const designate = document.querySelector(`#r${preventBug1}c${preventBug2}`);
-                if (designate.textContent == event.textContent && correct != 5){
-                    correct++;
-                    correctArr.push([preventBug1, preventBug2]);
-                }
-                if (correct == 5){
-                    i = 5;
-                    continue;
-                }
-                if (designate.textContent != event.textContent){
-                    correct = 0;
-                    correctArr = [];
-                }
+                const result = designate(event, preventBug1, preventBug2, correct, correctArr)
+                correct = result.correct
+                correctArr = result.correctArr
+                if (result.break)
+                    break;
             };
-                console.log(correct + " 세로 계산");
-            //대각선 좌->우 상단
+                console.log(correct + " 縦の計算");
+            //対角線 左->右 上段
             for (let i = -4; i < 5; i++){
                 preventBug1 = event.parentNode.rowIndex+i
                 preventBug2 = event.cellIndex+i
                 preventBugF();
                 console.log(`${preventBug1}, ${preventBug2}`)
-                const designate = document.querySelector(`#r${preventBug1}c${preventBug2}`);
-                if (designate.textContent == event.textContent && correct != 5){
-                    correctArr.push([preventBug1, preventBug2]);
-                    correct++;
-                }
-                if (correct == 5){
-                    i = 5;
-                    continue;
-                }
-                if (designate.textContent != event.textContent){
-                    correct = 0;
-                    correctArr = [];
-                }
+                const result = designate(event, preventBug1, preventBug2, correct, correctArr)
+                correct = result.correct
+                correctArr = result.correctArr
+                if (result.break)
+                    break;
             };
-                console.log(correct + " 대각선 좌->우 상단 계산");
-            //대각선 좌->우 하단
+                console.log(correct + " 対角線 左->右 上段の計算");
+            //対角線 左->右 下段
             for (let i = -4; i < 5; i++){
                 preventBug1 = event.parentNode.rowIndex-i
                 preventBug2 = event.cellIndex+i
                 preventBugF();
                 console.log(`${preventBug1}, ${preventBug2}`)
-                const designate = document.querySelector(`#r${preventBug1}c${preventBug2}`);
-                if (designate.textContent == event.textContent && correct != 5){
-                    correctArr.push([preventBug1, preventBug2]);
-                    correct++;
-                }
-                if (correct == 5){
-                    i = 5;
-                    continue;
-                };
-                if (designate.textContent != event.textContent){
-                    correct = 0;
-                    correctArr = [];
-                };
+                const result = designate(event, preventBug1, preventBug2, correct, correctArr)
+                correct = result.correct
+                correctArr = result.correctArr
+                if (result.break)
+                    break;
             };
-                console.log(correct + " 대각선 좌->우 하단 계산");
+                console.log(correct + " 対角線 左->右 下段の計算");
             if (correct == 5){
                 let $correctColor
                 for (let i = 0; i < 5; i++){
@@ -343,7 +319,7 @@
         };
 
 
-        //오목판 클릭 콜백함수
+        //碁盤のクリック コールバック関数
         const onClickCallback = (event) => {
             if (result == false){
             if(event.target.textContent == ''){
@@ -358,14 +334,14 @@
                     event.target.textContent = '';
                     event.target.style.backgroundColor = 'white';
                     turnChange();
-                    $result.textContent = `${turn}가 한 수 물렀습니다. ${turn} 턴입니다.`;
-                    return console.log(`${turn}가 한 수 물렀습니다.`);
+                    $result.textContent = `${turn}が一手打ち直しました。 ${turn}の番です。。`;
+                    return console.log(`${turn}が一手打ち直しました。`);
                 } else
-                return console.log('빈 칸이 아님');
+                return console.log('空欄ではない');
             };
             result = resultCalculator(event.target);
             turnChange();
-            $result.textContent = `현재 ${turn}의 턴입니다.`;
+            $result.textContent = `現在 ${turn}の番です。`;
             };
         };
 
@@ -375,7 +351,7 @@
                if(xTotalTime > 0){
                     xCountdown = $xCountdown.value;
                     xTimerFuc = setInterval((event)=>{
-                        const result = elapseTime(xTotalTime, xCountdown, $xCountdown.value, xCountdownChance)
+                        const result = elapseTime(xTotalTime, xCountdown, $xCountdown.value, xCountdownChance, xTimerFuc)
                         xTotalTime = result.totalTime;
                         xCountdown = result.countDown;
                         xCountdownChance = result.chance;
@@ -388,7 +364,7 @@
                if(oTotalTime > 0){
                     oCountdown = $oCountdown.value;
                     oTimerFuc = setInterval((event)=>{
-                       const result = elapseTime(oTotalTime, oCountdown, $oCountdown.value, oCountdownChance)
+                       const result = elapseTime(oTotalTime, oCountdown, $oCountdown.value, oCountdownChance, oTimerFuc)
                        oTotalTime = result.totalTime;
                        oCountdown = result.countDown;
                        oCountdownChance = result.chance;
@@ -398,36 +374,37 @@
                 return turn = 'O';
             };
         };
-        //대국 시간을 정했을 경우
+        //対局時間を決めた場合
 
 
-        const elapseTime = (totalTime, countDown, SettedcountDown, chance) => {
-            //대국시간 흐름
+        const elapseTime = (totalTime, countDown, SettedcountDown, chance, timerFunc) => {
+            //対局時間の流れ
             if (totalTime > 1){
                 totalTime -= 1;
-                $timer.textContent = `${turn}의 대국 시간: ${Math.floor(totalTime / 60)}분 ${totalTime % 60}초 남았습니다.`
+                $timer.textContent = `${turn}の対局時間: ${Math.floor(totalTime / 60)}分 ${totalTime % 60}秒残りました。`
                 } else if (totalTime == 1){
-                    //초읽기 시작
+                    //秒読みの始め
                     if(countDown > 0)
                     countDown -= 1;
                     if (chance > 1)
-                    $timer.textContent = `${turn}의 초읽기(${chance}개 남음): ${Math.floor(countDown / 60)}분 ${countDown % 60}초 남았습니다.`
+                    $timer.textContent = `${turn}の秒読み(${chance}回残りました): ${Math.floor(countDown / 60)}分 ${countDown % 60}秒残りました。`
                     else
-                    $timer.textContent = `${turn}의 마지막 초읽기: ${Math.floor(countDown / 60)}분 ${countDown % 60}초 남았습니다.`
-                    //초읽기 끝남, 찬스가 남았을 경우
+                    $timer.textContent = `${turn}の最後の秒読み: ${Math.floor(countDown / 60)}分 ${countDown % 60}秒残りました。`
+                    //秒読みが終わったが, チャンスが残った場合
                     if (countDown == 0 && chance > 1){
                         chance -= 1;  
                         countDown = SettedcountDown;
-                    //찬스가 없을 경우
+                    //チャンスがない場合
                     } else if (countDown == 0 && chance == 1) {
                         victory(turn);
+                        return clearInterval(timerFunc);
                     };
             }
             return {totalTime, countDown, chance};
         }
 
         const victory = (turn) => {
-            alert(`${turn}의 승리!`);
+            alert(`${turn}の勝利！`);
             result = true;
             return;
         }
