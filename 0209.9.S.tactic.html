@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>틱택토 커스텀</title>
+    <style>
+        
+        #ruleTable {
+            border-collapse: collapse;
+            width: 600px;
+            height: 100px;
+            margin: auto;
+        }
+
+        #gameTable {
+            border-collapse: collapse;
+            margin: auto;
+        }
+
+        th {
+        height: 40px;
+        background-color: green;
+        color: white;
+        text-align: center;
+        }
+
+        button {
+        position: relative;
+        margin: auto;
+        display: block;
+        width: 600px;
+        height: 50px;
+        color: white;
+        background-color: rgb(31, 193, 50);
+        border: none;
+        font-size: 18px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+    button:hover {
+        background-color: rgb(21, 158, 42);
+    }
+
+        td {
+          border: 1px solid black;
+          width: 40px;
+          height: 40px;
+          text-align: center;
+          /* background-color:darkgray; O*/
+          /* background-color:teal; X*/
+          /* background-color:red; Correct*/
+        }   
+        div {
+            font-size: 30px;
+        }
+    </style>
+</head>
+<body>
+    <table id = 'ruleTable' border="1" bordercolor="blue" align = "center" >
+        <tr bgcolor="green" align ="center"> 
+            <p><th colspan = "3" span style="color:white">게임 룰을 선택해주세요.</th></p>
+        </tr>
+        <tr>
+            <td colspan = "2">O에게 삼삼 금지 룰 적용[미완]</td>
+            <td><input id = "rule33" type= "checkbox"></td>
+        </tr>
+        <tr>
+            <td colspan = "2">O에게 사사 금지 룰 적용[미완]</td>
+            <td><input id = "rule44" type= "checkbox"></td>
+        </tr>
+        <tr>
+            <td colspan = "2">O에게 장목 금지 룰 적용[미완]</td>
+            <td><input id = "jangmok" type= "checkbox"></td>
+        </tr>
+        <tr>
+            <td colspan = "2">O의 대국시간 (기본: 무제한, 최소 1초)</td>
+            <td><input id = "oTotalTime" type= "number"></td>
+        </tr>
+        <tr>
+            <td colspan = "2">O의 초읽기 (기본: 40초, 최소 5초)</td>
+            <td><input id = "oCountdown" type= "number"></td>
+        </tr>
+        <tr>
+            <td colspan = "2">O의 초읽기 횟수 (기본: 3회, 최소 1회)</td>
+            <td><input id = "oCountdownChance" type= "number"></td>
+        </tr>
+        <tr>
+            <td colspan = "2">X의 대국시간          (기본: 무제한, 최소 1초)</td>
+            <td><input id = "xTotalTime" type= "number"></td>
+        </tr>
+        <tr>
+            <td colspan = "2">X의 초읽기            (기본: 40초, 최소 5초)</td>
+            <td><input id = "xCountdown" type= "number"></td>
+        </tr>
+        <tr>
+            <td colspan = "2">X의 초읽기 횟수       (기본: 3회, 최소 1회)</td>
+            <td><input id = "xCountdownChance" type= "number"></td>
+        </tr>
+        <tr>
+            <td colspan = "2">오목판 가로 길이 (기본: 19칸, 최소 5칸 최대 25칸)</td>
+            <td><input id = "cell" type= "number"></td>
+        </tr>
+        <tr>
+            <td colspan = "2">오목판 세로 길이 (기본: 19칸, 최소 5칸 최대 25칸)</td>
+            <td><input id = "row" type= "number"></td>
+        </tr>
+        <tr>
+            <td colspan="3">
+            <button>시작</button>
+            </td>
+        </tr>
+        </table>
+
+
+    <script>
+        const $table = document.createElement('table');
+        $table.setAttribute('id', 'gameTable');
+        const $result = document.createElement('div');
+        const $timer = document.createElement('div');
+        const $body = document.querySelector('body');
+        const $button = document.querySelector('button')
+        const $rule33 = document.querySelector('#rule33');
+        const $rule44 = document.querySelector('#rule44');
+        const $jangmok = document.querySelector('#jangmok');
+        const $oTotalTime = document.querySelector('#oTotalTime');
+        const $xTotalTime = document.querySelector('#xTotalTime');
+        const $oCountdown = document.querySelector('#oCountdown');
+        const $xCountdown = document.querySelector('#xCountdown');
+        const $oCountdownChance = document.querySelector('#oCountdownChance');
+        const $xCountdownChance = document.querySelector('#xCountdownChance');
+        const $row = document.querySelector('#row');
+        const $cell = document.querySelector('#cell');
+        let oTotalTime, oCountdown, oCountdownChance, xTotalTime, xCountdown, xCountdownChance, row, cell, rule33, rule44, jangmok;
+        let result = false;             // result가 false면 승부가 안난 상태, true면 승부가 난 상태.
+        let correctArr = [];
+        let turn = 'O';
+        let oTimerFuc = '';
+        let xTimerFuc = '';
+
+        //게임 시작 설정
+        const onClickStart = (event) => {
+            //이상한 값 솎아내기
+            if ($oTotalTime.value < 1 && $oTotalTime.value != ''){
+                alert("양식에 맞춰주세요.")
+                return;
+            };
+            if ($oCountdown.value < 5 && $oCountdown.value != ''){
+                alert("양식에 맞춰주세요.")
+                return;
+            };
+            if ($oCountdownChance.value < 1 && $oCountdownChance.value != ''){
+                alert("양식에 맞춰주세요.")
+                return;
+            };
+            if ($xTotalTime.value < 1 && $xTotalTime.value != ''){
+                alert("양식에 맞춰주세요.")
+                return;
+            };
+            if ($xCountdown.value < 5 && $xCountdown.value != ''){
+                alert("양식에 맞춰주세요.")
+                return;
+            };
+            if ($xCountdownChance.value < 1 && $xCountdownChance.value != ''){
+                alert("양식에 맞춰주세요.")
+                return;
+            };
+            if (($cell.value < 5 || $cell.value > 25) && $cell.value != ''){
+                alert("양식에 맞춰주세요.")
+                return;
+            };
+            if (($row.value < 5 || $row.value > 25) && $row.value != ''){
+                alert("양식에 맞춰주세요.")
+                return;
+            };
+            $row.value = $row.value === '' ? 19 : $row.value;
+            $cell.value = $cell.value === '' ? 19 : $cell.value;
+            $oTotalTime.value = $oTotalTime.value === '' ? 0 : $oTotalTime.value;
+            $xTotalTime.value = $xTotalTime.value === '' ? 0 : $xTotalTime.value;
+            $xCountdown.value = $xCountdown.value === '' ? 40 : $xCountdown.value;
+            $oCountdown.value = $oCountdown.value === '' ? 40 : $oCountdown.value;
+            $oCountdownChance.value = $oCountdownChance.value === '' ? 3 : $oCountdownChance.value;
+            $xCountdownChance.value = $xCountdownChance.value === '' ? 3 : $xCountdownChance.value;
+            oTotalTime = $oTotalTime.value;
+            oCountdown = $oCountdown.value+1;
+            oCountdownChance = $oCountdownChance.value;
+            xTotalTime = $xTotalTime.value;
+            xCountdown = $xCountdown.value+1;
+            xCountdownChance = $xCountdownChance.value;
+            row = $row.value;
+            cell = $cell.value;
+            rule33 = $rule33.checked;
+            rule44 = $rule44.checked;
+            jangmok = $jangmok.checked;
+            const $ruleTable = document.querySelector('#ruleTable');
+            $ruleTable.remove();
+            $button.remove();
+
+            //오목판 생성
+            for (let i = 0; i < row+1; i++){ 
+                const $tr = document.createElement('tr');
+                $table.appendChild($tr);
+                if (i == row){
+                    const $td = document.createElement('td');
+                    $td.id = `r99c99`;
+                    $td.style.display = 'none';
+                    $tr.appendChild($td);
+                    break;
+                };
+            for (let j = 0; j < cell; j++){
+                const $td = document.createElement('td');
+                $td.id = `r${i}c${j}`;
+                $td.addEventListener('click',onClickCallback);
+                $tr.appendChild($td);
+            };
+        };
+        $body.prepend($table, $result, $timer);
+        };
+        
+        $button.addEventListener('click', onClickStart);
+
+        
+        
+        $result.textContent = `현재 ${turn}의 턴입니다.`;
+
+
+        const designate = (preventBug1, preventBug2, correct, correctArr) => {
+            const designate = document.querySelector(`#r${preventBug1}c${preventBug2}`);
+                if (designate.textContent == event.textContent && correct != 5){
+                    correct++;
+                    correctArr.push([preventBug1, preventBug2]);
+                }
+                if (correct == 5){
+                    return {correct, correctArr, continue: true}
+                }
+                if (designate.textContent != event.textContent){
+                    correct = 0;
+                    correctArr = [];
+                }
+                return {correct, correctArr, continue: false}
+        }
+
+        //오목판 승패계산함수
+        const resultCalculator = (event) => {
+            //event.cellIndex-4 ~~ event.cellIndex+4까지 조사 (가로)
+            let correct = 0;
+            let preventBug1 = 0;
+            let preventBug2 = 0;
+            const preventBugF = () => {
+            if (preventBug1 < 0 || preventBug1 > $row.value-1 || preventBug2 < 0 || preventBug2 > $cell.value-1){
+                preventBug1 = 99;
+                preventBug2 = 99;
+            };
+            };
+
+            //가로
+            for (let i = -4; i < 5; i++){
+                preventBug1 = event.parentNode.rowIndex
+                preventBug2 = event.cellIndex+i;
+                preventBugF();
+                console.log(`${preventBug1}, ${preventBug2}`)
+                const result = designate(preventBug1, preventBug2, correct, correctArr)
+                correct = result.correct
+                correctArr = result.correctArr
+                if (result.continue)
+                    continue;
+            };
+                console.log(correct + " 가로 계산");
+            //세로
+            for (let i = -4; i < 5; i++){
+                preventBug1 = event.parentNode.rowIndex+i
+                preventBug2 = event.cellIndex
+                preventBugF();
+                console.log(`${preventBug1}, ${preventBug2}`)
+                const designate = document.querySelector(`#r${preventBug1}c${preventBug2}`);
+                if (designate.textContent == event.textContent && correct != 5){
+                    correct++;
+                    correctArr.push([preventBug1, preventBug2]);
+                }
+                if (correct == 5){
+                    i = 5;
+                    continue;
+                }
+                if (designate.textContent != event.textContent){
+                    correct = 0;
+                    correctArr = [];
+                }
+            };
+                console.log(correct + " 세로 계산");
+            //대각선 좌->우 상단
+            for (let i = -4; i < 5; i++){
+                preventBug1 = event.parentNode.rowIndex+i
+                preventBug2 = event.cellIndex+i
+                preventBugF();
+                console.log(`${preventBug1}, ${preventBug2}`)
+                const designate = document.querySelector(`#r${preventBug1}c${preventBug2}`);
+                if (designate.textContent == event.textContent && correct != 5){
+                    correctArr.push([preventBug1, preventBug2]);
+                    correct++;
+                }
+                if (correct == 5){
+                    i = 5;
+                    continue;
+                }
+                if (designate.textContent != event.textContent){
+                    correct = 0;
+                    correctArr = [];
+                }
+            };
+                console.log(correct + " 대각선 좌->우 상단 계산");
+            //대각선 좌->우 하단
+            for (let i = -4; i < 5; i++){
+                preventBug1 = event.parentNode.rowIndex-i
+                preventBug2 = event.cellIndex+i
+                preventBugF();
+                console.log(`${preventBug1}, ${preventBug2}`)
+                const designate = document.querySelector(`#r${preventBug1}c${preventBug2}`);
+                if (designate.textContent == event.textContent && correct != 5){
+                    correctArr.push([preventBug1, preventBug2]);
+                    correct++;
+                }
+                if (correct == 5){
+                    i = 5;
+                    continue;
+                };
+                if (designate.textContent != event.textContent){
+                    correct = 0;
+                    correctArr = [];
+                };
+            };
+                console.log(correct + " 대각선 좌->우 하단 계산");
+            if (correct == 5){
+                let $correctColor
+                for (let i = 0; i < 5; i++){
+                $correctColor = document.querySelector(`#r${correctArr[i][0]}c${correctArr[i][1]}`)
+                $correctColor.style.backgroundColor = 'red';
+                };
+                return victory(turn);
+            };
+            return result = false;
+        };
+
+
+        //오목판 클릭 콜백함수
+        const onClickCallback = (event) => {
+            if (result == false){
+            if(event.target.textContent == ''){
+            event.target.textContent = turn;
+            if(turn === 'O')
+            event.target.style.backgroundColor = 'darkgray';
+            else
+            event.target.style.backgroundColor = 'teal';
+            }
+            else{
+                if (event.target.textContent != turn){
+                    event.target.textContent = '';
+                    event.target.style.backgroundColor = 'white';
+                    turnChange();
+                    $result.textContent = `${turn}가 한 수 물렀습니다. ${turn} 턴입니다.`;
+                    return console.log(`${turn}가 한 수 물렀습니다.`);
+                } else
+                return console.log('빈 칸이 아님');
+            };
+            result = resultCalculator(event.target);
+            turnChange();
+            $result.textContent = `현재 ${turn}의 턴입니다.`;
+            };
+        };
+
+
+        const turnChange = (event) => {
+            if (turn == 'O'){
+               if(xTotalTime > 0){
+                    xCountdown = $xCountdown.value;
+                    xTimerFuc = setInterval((event)=>{
+                        const result = elapseTime(xTotalTime, xCountdown, $xCountdown.value, xCountdownChance)
+                        xTotalTime = result.totalTime;
+                        xCountdown = result.countDown;
+                        xCountdownChance = result.chance;
+                    },1000);
+                };
+                clearInterval(oTimerFuc);
+                return turn = 'X';
+            };
+            if (turn == 'X'){
+               if(oTotalTime > 0){
+                    oCountdown = $oCountdown.value;
+                    oTimerFuc = setInterval((event)=>{
+                       const result = elapseTime(oTotalTime, oCountdown, $oCountdown.value, oCountdownChance)
+                       oTotalTime = result.totalTime;
+                       oCountdown = result.countDown;
+                       oCountdownChance = result.chance;
+                    },1000);
+                };
+                clearInterval(xTimerFuc);
+                return turn = 'O';
+            };
+        };
+        //대국 시간을 정했을 경우
+
+
+        const elapseTime = (totalTime, countDown, SettedcountDown, chance) => {
+            //대국시간 흐름
+            if (totalTime > 1){
+                totalTime -= 1;
+                $timer.textContent = `${turn}의 대국 시간: ${Math.floor(totalTime / 60)}분 ${totalTime % 60}초 남았습니다.`
+                } else if (totalTime == 1){
+                    //초읽기 시작
+                    if(countDown > 0)
+                    countDown -= 1;
+                    if (chance > 1)
+                    $timer.textContent = `${turn}의 초읽기(${chance}개 남음): ${Math.floor(countDown / 60)}분 ${countDown % 60}초 남았습니다.`
+                    else
+                    $timer.textContent = `${turn}의 마지막 초읽기: ${Math.floor(countDown / 60)}분 ${countDown % 60}초 남았습니다.`
+                    //초읽기 끝남, 찬스가 남았을 경우
+                    if (countDown == 0 && chance > 1){
+                        chance -= 1;  
+                        countDown = SettedcountDown;
+                    //찬스가 없을 경우
+                    } else if (countDown == 0 && chance == 1) {
+                        victory(turn);
+                    };
+            }
+            return {totalTime, countDown, chance};
+        }
+
+        const victory = (turn) => {
+            alert(`${turn}의 승리!`);
+            result = true;
+            return;
+        }
+        
+        
+
+    </script>
+</body>
+</html>

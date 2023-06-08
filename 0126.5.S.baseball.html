@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>숫자야구 커스텀</title>
+    <style>
+
+    </style>
+</head>
+<body>
+    <form action="" id="form" style="float:left">   <!-- float:left 다른 영역의 태그를 나란히 붙이는 명령어 -->
+        <input type="text" id = "input">
+        <button type="submit">입력</button>
+    </form>
+        <button id = "initial" style="float:left">초기화</button>
+        <button id = "clear">기록 지우기</button>
+    <p><div id="logs"></div></p>
+    <p><div id="logs2">기록: <br></div></p>
+</body>
+<script>
+    const $form = document.querySelector("form");
+    const $input = document.querySelector("#input");
+    const $logs = document.querySelector("#logs");
+    const $logs2 = document.querySelector("#logs2");
+    const $initial = document.querySelector("#initial");
+    const $clear = document.querySelector("#clear");
+
+    let cpuNumber = [];
+
+    let out = 0;
+    let tries = 0; 
+    
+    const onInitial = () =>{
+        let useMethod;
+        const array19 = [1,2,3,4,5,6,7,8,9];
+        cpuNumber = [];
+            while(cpuNumber.length < 4){
+                useMethod = Math.floor(Math.random()*array19.length);
+                cpuNumber.push(array19[useMethod]);
+                array19.splice(useMethod,1);
+            };
+            out = 0;
+            tries = 0;
+            console.log(cpuNumber);
+            $logs2.innerHTML += "제시값이 새로 정해짐 <br>";
+            return $logs.textContent = "결과: 네 자릿수의 값이 새로 정해졌습니다. 맞춰보세요!";
+        };
+
+        $initial.addEventListener('click', onInitial);
+        onInitial();
+        $clear.addEventListener('click', () => {
+            return $logs2.innerHTML = "기록: <br>";
+        });
+
+        $form.addEventListener('submit', ()=> {
+            event.preventDefault();
+            //input값 유효상태 확인
+            if (new Set($input.value).size != 4)
+                return $logs.textContent = "결과: 유효한 값이 아닙니다. 중복되는 숫자가 없는 네 자릿수를 입력하세요.";
+            //유효한 값이라면 넘어감
+            $logs.textContent = "결과: " + $input.value;
+            let ball = 0;
+            let strike = 0;
+            let input = $input.value;
+            const checkArray = input.split("");                 //변수명.split(구분점,배열길이); => 문자열을 배열에 세팅하는 함수로, 
+                                                                //구분점은 문자열을 읽는 과정에서 구분점에 입력한 문자열을 만날 경우 다음 인덱스로 넘어가서 입력한다.
+                                                                //만난 문자열은 다음 인덱스에 입력된다. 
+                                                                //즉, " "를 입력할 경우 문자열에서 띄어쓰기를 할 때마다 인덱스가 잘리며, 다음 인덱스에 띄우고(" "이 입력되고) 입력된다. 
+
+            //checkArray 작성. 다음과 같이 할 경우 split과 유사하나 중간에 0이 있으면 숫자로 변하는 과정에서 0이 있던 자릿수자체가 사라지는 문제점이 있었음.
+            /*for(let a = 0; Number(input) != 0; ){
+                a = Math.floor(Number(input)/(10**(input.length-1)));
+                checkArray.push(a);
+                if (a == 0)
+                return $logs.textContent = "결과: " + "유효한 값이 아닙니다. 0은 포함될 수 없습니다.";
+                input = String(Number(input) - (a * (10**(input.length-1))));
+            };*/
+            
+            //0가 포함되어 있는지 확인하는 동시에 배열의 문자열을 모두 숫자로 바꾸는 과정
+            for(let a = 0; a < checkArray.length; a++){
+                if (checkArray[a] == '0')
+                return $logs.textContent = "결과: " + "유효한 값이 아닙니다. 0은 포함될 수 없습니다.";
+                checkArray[a] = Number(checkArray[a]);
+            }
+            console.log(checkArray);
+            //볼, 스트라이크 확인
+            for (let a = 0; a < cpuNumber.length; a++){
+                if (checkArray[a] == cpuNumber[a]){
+                    strike++;
+                } else {
+                    for (let b = 0; b < cpuNumber.length; b++){
+                        if (b == a){
+                            continue;
+                        };
+                        if (checkArray[b] == cpuNumber[a]){
+                            ball++;
+                            continue;
+                        };
+                    };
+                };
+            };
+            if (ball == 0 && strike == 0){
+                out ++;
+                tries ++;
+                $logs2.innerHTML += $input.value + ", " + out + " 아웃, " + tries + " 번째 시도<br> ";
+                return $logs.textContent = "결과: " + out + " 아웃입니다. " + tries + " 회 시도하셨습니다.";
+            };
+            if (strike == 4){
+                tries++;
+                $logs2.innerHTML += $input.value + ", 홈런, " + tries + " 번째 시도<br> ";
+                return $logs.textContent = "결과: 축하합니다. 홈런입니다!";
+            }
+            
+            tries++;
+            $logs2.innerHTML += $input.value + ", " + strike + " 스트라이크, " + ball + " 볼, " + tries + " 번째 시도<br> ";
+            return $logs.textContent = "결과: " + strike + " 스트라이크, " + ball + " 볼입니다. " + tries + " 회 시도하셨습니다.";
+        });
+    
+</script>
+</html>
